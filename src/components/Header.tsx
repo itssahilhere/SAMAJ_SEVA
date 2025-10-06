@@ -454,10 +454,7 @@ const Header = () => {
           <nav className="flex-1 overflow-y-auto mt-4 no-scrollbar">
             {headerRouteData.map((item) => (
               <Link key={item.id} to={`/${item.value}`}>
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between py-3 border-b border-gray-300 first:border-t"
-                >
+                <div className="flex items-center justify-between py-3 border-b border-gray-300 first:border-t">
                   <span className="text-white font-medium">{item.name}</span>
                   <IoIosArrowForward className="text-white" />
                 </div>
