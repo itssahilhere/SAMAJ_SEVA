@@ -14,3 +14,33 @@ body {
   background-color: #f9fafb;
   color: #111827;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes scroll-x {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Continuous scroll animation */
+.animate-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll-x 25s linear infinite;
+  animation-play-state: running;
+}
+
+/* Pause on hover */
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
