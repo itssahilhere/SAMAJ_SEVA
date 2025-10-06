@@ -309,7 +309,6 @@ function App() {
                   regions={regions}
                   selectedRegion={selectedRegion}
                   onRegionChange={handleRegionChange}
-                  onSearch={handleSearch}
                 />
 
                 <BreakingNews breakingNews={breakingNews} loading={loading} />
