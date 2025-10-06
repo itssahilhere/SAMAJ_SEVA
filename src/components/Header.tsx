@@ -383,13 +383,13 @@ const Header = () => {
               {day}, {year}
             </p>
           </div>
-          <div>
-            <nav className="no-scrollbar flex gap-6 overflow-x-auto whitespace-nowrap">
+          <div className="overflow-x-auto no-scrollbar">
+            <nav className="flex gap-6 whitespace-nowrap px-4">
               {headerRouteData.map((item) => (
                 <Link
                   key={item.id}
                   to={`/${item.value}`}
-                  className="text-gray-700 hover:text-red-600 font-medium"
+                  className="text-gray-700 hover:text-red-600 font-medium flex-shrink-0"
                 >
                   {item.name}
                 </Link>
