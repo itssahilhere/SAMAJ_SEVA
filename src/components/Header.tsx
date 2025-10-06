@@ -347,7 +347,7 @@ const Header = () => {
           </div>
           <div>
             <h1 className="absolute top-2.5 left-1/2 -translate-x-1/2 font-bold text-3xl">
-              SAMAJ SEVAK
+              SAMAJ SEWAK
             </h1>
           </div>
           <div className="flex items-center gap-4">
@@ -427,7 +427,7 @@ const Header = () => {
               className="text-white h-6 w-6"
               onClick={() => setSidebarOpen(true)}
             />
-            <h1 className="font-bold text-white text-xl">SAMAJ SEVAK</h1>
+            <h1 className="font-bold text-white text-xl">SAMAJ SEWAK</h1>
           </div>
           <div className="flex items-center gap-2">
             <IoIosNotificationsOutline className="text-white h-8 w-8" />
