@@ -1,12 +1,12 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import type { Region } from "../types";
+// import type { Region } from "../types";
 
-interface HeaderProps {
-  regions: Region[];
-  selectedRegion: string;
-  onRegionChange: (regionCode: string) => void;
-}
+// interface HeaderProps {
+//   regions: Region[];
+//   selectedRegion: string;
+//   onRegionChange: (regionCode: string) => void;
+// }
 
 import {
   FaLocationDot,
@@ -61,11 +61,7 @@ const headerRouteData = [
   { id: 11, name: "Jharkand", value: "jharkand" },
 ];
 
-const Header: React.FC<HeaderProps> = ({
-  regions,
-  selectedRegion,
-  onRegionChange,
-}) => {
+const Header = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
 

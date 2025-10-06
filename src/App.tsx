@@ -305,11 +305,7 @@ function App() {
             path="/"
             element={
               <>
-                <Header
-                  regions={regions}
-                  selectedRegion={selectedRegion}
-                  onRegionChange={handleRegionChange}
-                />
+                <Header />
 
                 <BreakingNews breakingNews={breakingNews} loading={loading} />
 
