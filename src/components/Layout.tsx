@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+// import { Link, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import type { Region } from "../types";
 
@@ -18,26 +18,27 @@ const Layout: React.FC<LayoutProps> = ({
   onSearch,
   children,
 }) => {
-  const location = useLocation();
+  // const location = useLocation();
 
   // Helper function to check if a link is active
-  const isActive = (path: string) => {
-    if (path === "/") {
-      return location.pathname === "/" || location.pathname === "/home";
-    }
-    return location.pathname === path;
-  };
+  // const isActive = (path: string) => {
+  //   if (path === "/") {
+  //     return location.pathname === "/" || location.pathname === "/home";
+  //   }
+  //   return location.pathname === path;
+  // };
 
   // Helper function to get active link classes for footer
-  const getFooterActiveClasses = (path: string) => {
-    const baseClasses = "hover:text-white transition-colors duration-200";
-    const activeClasses = "text-yellow-300 font-semibold";
-    const inactiveClasses = "text-gray-300";
+  // const getFooterActiveClasses = (path: string) => {
+  //   const baseClasses = "hover:text-white transition-colors duration-200";
+  //   const activeClasses = "text-yellow-300 font-semibold";
+  //   const inactiveClasses = "text-gray-300";
 
-    return isActive(path)
-      ? `${baseClasses} ${activeClasses}`
-      : `${baseClasses} ${inactiveClasses}`;
-  };
+  //   return isActive(path)
+  //     ? `${baseClasses} ${activeClasses}`
+  //     : `${baseClasses} ${inactiveClasses}`;
+  // };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header
@@ -49,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({
       {children}
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
+      {/* <footer className="bg-gray-800 text-white py-8 mt-16">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -124,7 +125,7 @@ const Layout: React.FC<LayoutProps> = ({
             <p>&copy; 2025 SAMAJ SEWAK. All rights reserved.</p>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 };

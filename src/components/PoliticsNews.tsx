@@ -1,8 +1,8 @@
-import React from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Loader2, RefreshCw } from "lucide-react";
 import type { NewsArticle } from "../types";
-import NewsCard from "./NewsCard";
 import SkeletonLoader from "./SkeletonLoader";
+import PoliticsNewsCard from "./PoliticsNewsCard";
 
 interface NewsGridProps {
   news: NewsArticle[];
@@ -12,9 +12,11 @@ interface NewsGridProps {
   onLoadMore?: () => void;
   hasMore?: boolean;
   loadingMore?: boolean;
+  autoScroll?: boolean;
+  scrollInterval?: number;
 }
 
-const NewsGrid: React.FC<NewsGridProps> = ({
+const PolictsNews: React.FC<NewsGridProps> = ({
   news,
   loading = false,
   error = null,
@@ -22,7 +24,44 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   onLoadMore,
   hasMore = true,
   loadingMore = false,
+  autoScroll = true,
+  scrollInterval = 3000,
 }) => {
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const [scrolling, setScrolling] = useState(false);
+
+  const handleNext = () => {
+    if (!sliderRef.current) return;
+    sliderRef.current.scrollBy({
+      left: sliderRef.current.offsetWidth * 0.8,
+      behavior: "smooth",
+    });
+  };
+
+  const handlePrev = () => {
+    if (!sliderRef.current) return;
+    sliderRef.current.scrollBy({
+      left: -sliderRef.current.offsetWidth * 0.8,
+      behavior: "smooth",
+    });
+  };
+
+  useEffect(() => {
+    if (!autoScroll || scrolling) return;
+    const interval = setInterval(() => {
+      if (!sliderRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        handleNext();
+      }
+    }, scrollInterval);
+    return () => clearInterval(interval);
+  }, [autoScroll, scrolling]);
+
+  const stopAutoScroll = () => setScrolling(true);
+  const startAutoScroll = () => setScrolling(false);
   if (loading) {
     return (
       <div className="space-y-8">
@@ -76,25 +115,47 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   }
 
   return (
-    <div className="space-y-8">
-      {/* Hero Article */}
-      {news.length > 0 && (
-        <div className="mb-8 transform hover:scale-[1.02] transition-transform duration-300">
-          <NewsCard article={news[0]} size="large" />
-        </div>
-      )}
-
+    <div className="">
       {/* Grid Layout for remaining articles */}
-      <div className="grid grid-cols-1 md:grid-cols-2  gap-8">
-        {news.slice(1).map((article, index) => (
-          <div
-            key={article.id}
-            className="transform hover:scale-105 transition-transform duration-300"
-            style={{ animationDelay: `${index * 100}ms` }}
+      <div className="relative w-full max-w-7xl mx-auto overflow-hidden group">
+        {/* Header */}
+        <div className="flex items-center mb-4">
+          <h1 className="mr-auto font-bold text-xl">Politics</h1>
+
+          <button
+            onClick={handlePrev}
+            onMouseEnter={stopAutoScroll}
+            onMouseLeave={startAutoScroll}
+            className="bg-black hover:bg-gray-800 transition cursor-pointer"
           >
-            <NewsCard article={article} size="medium" />
-          </div>
-        ))}
+            <ChevronLeft className="h-6 w-6 text-white" />
+          </button>
+          <button
+            onClick={handleNext}
+            onMouseEnter={stopAutoScroll}
+            onMouseLeave={startAutoScroll}
+            className="bg-black hover:bg-gray-800 ml-2 transition cursor-pointer"
+          >
+            <ChevronRight className="h-6 w-6 text-white" />
+          </button>
+        </div>
+
+        {/* Horizontal Scrollable Container */}
+        <div
+          ref={sliderRef}
+          onMouseEnter={stopAutoScroll}
+          onMouseLeave={startAutoScroll}
+          className="flex  gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar"
+        >
+          {news.map((article) => (
+            <div
+              key={article.id}
+              className="flex-shrink-0 w-[100%] snap-center"
+            >
+              <PoliticsNewsCard article={article} size="large" />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Load More Button */}
@@ -130,4 +191,4 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   );
 };
 
-export default NewsGrid;
+export default PolictsNews;

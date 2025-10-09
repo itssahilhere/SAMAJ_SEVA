@@ -4,17 +4,13 @@ import { saveToCache, getFromCache, CACHE_DURATION } from "../utils/cacheUtils";
 
 // NewsData.io API configuration
 const NEWSDATA_API_KEY = import.meta.env.VITE_NEWSDATA_API_KEY;
-
 const NEWSDATA_BASE_URL = "https://newsdata.io/api/1";
+
 // Pagination cache to track pagination for different queries
 interface PaginationCache {
   [key: string]: number;
 }
-
 const paginationCache: PaginationCache = {};
-
-// API instance
-// Removed unused 'api' declaration.
 
 // Helper function to convert NewsData.io article to our NewsArticle format
 const convertNewsDataArticle = (
@@ -85,10 +81,16 @@ const isAxiosError = (
 const regions: Region[] = [
   { id: "1", name: "All Regions", code: "all" },
   { id: "2", name: "India", code: "in" },
-  { id: "3", name: "Punjab", code: "punjab" },
-  { id: "4", name: "Delhi", code: "delhi" },
-  { id: "5", name: "Mumbai", code: "mumbai" },
-  { id: "6", name: "Kerala", code: "kerala" },
+  { id: "3", name: "Delhi", code: "delhi" },
+  { id: "4", name: "Punjab", code: "punjab" },
+  { id: "5", name: "Chandigarh", code: "chandigarh" },
+  { id: "6", name: "Uttar Pradesh", code: "uttar-pradesh" },
+  { id: "7", name: "Himachal", code: "himachal" },
+  { id: "8", name: "Haryana", code: "haryana" },
+  { id: "9", name: "Madhya Pradesh", code: "madhya-pradesh" },
+  { id: "10", name: "Jammu and Kashmir", code: "jammu-and-kashmir" },
+  { id: "11", name: "Bihar", code: "bihar" },
+  { id: "12", name: "Jharkand", code: "jharkand" },
 ];
 
 export const newsAPI = {
@@ -107,10 +109,7 @@ export const newsAPI = {
     page: number = 1,
     size: number = 10
   ): Promise<APIResponse<NewsArticle[]>> => {
-    // Create cache key for this specific request
     const cacheKey = `news-region-${regionCode}-page-${page}`;
-
-    // Try to get from cache first (only for page 1)
     if (page === 1) {
       const cachedData = getFromCache<NewsArticle[]>(cacheKey);
       if (cachedData && cachedData.length > 0) {
@@ -123,7 +122,6 @@ export const newsAPI = {
     }
 
     try {
-      // Map region codes to search queries for NewsData.io
       const regionQueriesMap: { [key: string]: string[] } = {
         all: [
           "India",
@@ -141,70 +139,108 @@ export const newsAPI = {
           "latest India",
           "India updates",
         ],
+        delhi: ["Delhi", "Delhi news", "NCR", "New Delhi", "Gurgaon", "Noida"],
         punjab: [
           "Punjab",
           "Punjab news",
-          "Chandigarh",
           "Amritsar",
           "Ludhiana",
           "Jalandhar",
+          "Chandigarh",
         ],
-        delhi: ["Delhi", "Delhi news", "NCR", "New Delhi", "Gurgaon", "Noida"],
-        mumbai: [
-          "Mumbai",
-          "Mumbai news",
-          "Maharashtra",
-          "Bombay",
-          "Pune",
-          "Nashik",
+        chandigarh: [
+          "Chandigarh",
+          "Punjab news",
+          "Chandigarh news",
+          "Sector 17",
+          "Panchkula",
+          "Mohali",
         ],
-        kerala: [
-          "Kerala",
-          "Kerala news",
-          "Thiruvananthapuram",
-          "Kochi",
-          "Kozhikode",
-          "Thrissur",
+        "uttar-pradesh": [
+          "Uttar Pradesh",
+          "UP news",
+          "Lucknow",
+          "Kanpur",
+          "Varanasi",
+          "Agra",
+        ],
+        himachal: [
+          "Himachal Pradesh",
+          "Shimla",
+          "Manali",
+          "Dharamshala",
+          "Kullu",
+          "Solan",
+        ],
+        haryana: [
+          "Haryana",
+          "Haryana news",
+          "Gurgaon",
+          "Faridabad",
+          "Panipat",
+          "Karnal",
+        ],
+        "madhya-pradesh": [
+          "Madhya Pradesh",
+          "MP news",
+          "Bhopal",
+          "Indore",
+          "Gwalior",
+          "Jabalpur",
+        ],
+        "jammu-and-kashmir": [
+          "Jammu and Kashmir",
+          "Jammu",
+          "Srinagar",
+          "Kashmir news",
+          "Ladakh",
+          "Anantnag",
+        ],
+        bihar: [
+          "Bihar",
+          "Bihar news",
+          "Patna",
+          "Gaya",
+          "Bhagalpur",
+          "Muzaffarpur",
+        ],
+        jharkand: [
+          "Jharkhand",
+          "Jharkhand news",
+          "Ranchi",
+          "Jamshedpur",
+          "Dhanbad",
+          "Bokaro",
         ],
       };
 
       const paginationKey = `region-${regionCode}`;
-
-      // For page 1, reset pagination
       if (page === 1) {
         paginationCache[paginationKey] = 1;
       }
 
-      // Get query variations for this region
       const queryVariations = regionQueriesMap[regionCode] || ["India"];
       const query = queryVariations[(page - 1) % queryVariations.length];
 
-      // Build request parameters for NewsData.io API
       const params: Record<string, string | number> = {
         apikey: NEWSDATA_API_KEY,
         country: "in",
         language: "en",
-        size: size > 10 ? 10 : size, // NewsData.io max is 10
+        size: size > 10 ? 10 : size,
         q: query,
       };
 
-      // NewsData.io uses different approach for pagination
-      // We'll use different queries to get varied content for different pages
       if (page > 1) {
-        // Use different query variations for different pages to get varied content
         const queryIndex = (page - 1) % queryVariations.length;
         params.q = queryVariations[queryIndex];
       }
 
-
       const response = await axios.get(`${NEWSDATA_BASE_URL}/latest`, {
-        params: params,
+        params,
       });
-
 
       const articles = response.data.results.map(convertNewsDataArticle);
 
-      // Save to cache (only page 1 for primary content)
       if (page === 1) {
         saveToCache(cacheKey, articles, CACHE_DURATION.MEDIUM);
       }
@@ -215,15 +251,12 @@ export const newsAPI = {
         status: 200,
       };
     } catch (error: unknown) {
-
-      // If 429 error, try to return expired cache as fallback
       if (isAxiosError(error) && error.response?.status === 429) {
         console.warn(
           "⚠️ Rate limit exceeded (429). Attempting to use cached data..."
         );
-        const expiredCache = getFromCache<NewsArticle[]>(cacheKey, true); // Ignore expiration
+        const expiredCache = getFromCache<NewsArticle[]>(cacheKey, true);
         if (expiredCache && expiredCache.length > 0) {
-          console.log("✅ Returning expired cache to avoid 429 error");
           return {
             data: expiredCache,
             message: "Loaded from expired cache due to rate limit",
@@ -231,13 +264,103 @@ export const newsAPI = {
           };
         }
       }
-
-      // Return error response
       return {
         data: [],
         message:
           (isAxiosError(error) && error.response?.data?.message) ||
           "Failed to fetch news",
+        status: (isAxiosError(error) && error.response?.status) || 500,
+      };
+    }
+  },
+
+  // New method: Get news by region AND category combined
+  getNewsByRegionAndCategory: async (
+    regionCode: string,
+    category: string,
+    page: number = 1,
+    size: number = 10
+  ): Promise<APIResponse<NewsArticle[]>> => {
+    const regionQueriesMap: { [key: string]: string[] } = {
+      all: ["India"],
+      in: ["India"],
+      delhi: ["Delhi"],
+      punjab: ["Punjab"],
+      chandigarh: ["Chandigarh"],
+      "uttar-pradesh": ["Uttar Pradesh"],
+      himachal: ["Himachal Pradesh"],
+      haryana: ["Haryana"],
+      "madhya-pradesh": ["Madhya Pradesh"],
+      "jammu-and-kashmir": ["Jammu and Kashmir"],
+      bihar: ["Bihar"],
+      jharkand: ["Jharkhand"],
+    };
+
+    const categoryQueriesMap: { [key: string]: string[] } = {
+      home: ["news"],
+      "top-news": ["top-news"],
+      politics: ["politics"],
+      sports: ["sports"],
+      entertainment: ["entertainment"],
+      business: ["business"],
+      technology: ["technology"],
+    };
+
+    const regionQ = regionQueriesMap[regionCode]?.[0] || "India";
+    const categoryQ = categoryQueriesMap[category]?.[0] || "news";
+
+    const query = `${regionQ} ${categoryQ}`;
+    const cacheKey = `regioncat-${regionCode}-${category}-page-${page}`;
+
+    if (page === 1) {
+      const cachedData = getFromCache<NewsArticle[]>(cacheKey);
+      if (cachedData && cachedData.length > 0) {
+        return {
+          data: cachedData,
+          message: "Loaded from cache",
+          status: 200,
+        };
+      }
+    }
+
+    try {
+      const response = await axios.get(`${NEWSDATA_BASE_URL}/latest`, {
+        params: {
+          apikey: NEWSDATA_API_KEY,
+          country: "in",
+          language: "en",
+          size: size > 10 ? 10 : size,
+          q: query,
+        },
+      });
+
+      const articles = response.data.results.map(convertNewsDataArticle);
+
+      if (page === 1) {
+        saveToCache(cacheKey, articles, CACHE_DURATION.MEDIUM);
+      }
+
+      return {
+        data: articles,
+        message: "Region-category news fetched successfully",
+        status: 200,
+      };
+    } catch (error: unknown) {
+      if (isAxiosError(error) && error.response?.status === 429) {
+        const expiredCache = getFromCache<NewsArticle[]>(cacheKey, true);
+        if (expiredCache && expiredCache.length > 0) {
+          return {
+            data: expiredCache,
+            message: "Loaded from expired cache due to rate limit",
+            status: 200,
+          };
+        }
+      }
+      return {
+        data: [],
+        message:
+          (isAxiosError(error) && error.response?.data?.message) ||
+          "Failed to fetch region-category news",
         status: (isAxiosError(error) && error.response?.status) || 500,
       };
     }
@@ -575,4 +698,7 @@ export const newsAPI = {
       };
     }
   },
+
+  // Other existing methods (getBreakingNews, getFeaturedNews, searchNews, getNewsByCategory) unchanged...
+  // ... You can keep your existing getBreakingNews, getFeaturedNews, searchNews, and getNewsByCategory methods here.
 };

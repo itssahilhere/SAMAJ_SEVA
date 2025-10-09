@@ -1,8 +1,8 @@
 import React from "react";
 import { Loader2, RefreshCw } from "lucide-react";
 import type { NewsArticle } from "../types";
-import NewsCard from "./NewsCard";
 import SkeletonLoader from "./SkeletonLoader";
+import BusinessNewsCard from "./BusinessNewsCard";
 
 interface NewsGridProps {
   news: NewsArticle[];
@@ -14,7 +14,7 @@ interface NewsGridProps {
   loadingMore?: boolean;
 }
 
-const NewsGrid: React.FC<NewsGridProps> = ({
+const BusinessNews: React.FC<NewsGridProps> = ({
   news,
   loading = false,
   error = null,
@@ -76,26 +76,16 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   }
 
   return (
-    <div className="space-y-8">
-      {/* Hero Article */}
-      {news.length > 0 && (
-        <div className="mb-8 transform hover:scale-[1.02] transition-transform duration-300">
-          <NewsCard article={news[0]} size="large" />
-        </div>
-      )}
-
+    <div className="space-y-6">
+      <h1 className="font-bold text-xl">Business</h1>
       {/* Grid Layout for remaining articles */}
-      <div className="grid grid-cols-1 md:grid-cols-2  gap-8">
-        {news.slice(1).map((article, index) => (
-          <div
-            key={article.id}
-            className="transform hover:scale-105 transition-transform duration-300"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <NewsCard article={article} size="medium" />
+      <ul className="list-disc flex flex-col gap-2 pl-5">
+        {news.slice(1).map((article) => (
+          <div key={article.id}>
+            <BusinessNewsCard article={article} size="medium" />
           </div>
         ))}
-      </div>
+      </ul>
 
       {/* Load More Button */}
       {news.length > 0 && hasMore && onLoadMore && (
@@ -130,4 +120,4 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   );
 };
 
-export default NewsGrid;
+export default BusinessNews;

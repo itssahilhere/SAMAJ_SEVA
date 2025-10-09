@@ -32,10 +32,10 @@ const CategoryPage: React.FC<CategoryPageProps> = ({
       setLoading(true);
       setError(null);
 
-      const response = await newsAPI.getNewsByCategory(category, 1, 10);
-      setNews(response.data);
-      setCurrentPage(1);
-      setHasMoreNews(response.data.length >= 10);
+      // const response = await newsAPI.getNewsByCategory(category, 1, 10);
+      // setNews(response.data);
+      // setCurrentPage(1);
+      // setHasMoreNews(response.data.length >= 10);
     } catch (err) {
       setError("Error loading news. Please try again.");
       console.error("Error loading category news:", err);

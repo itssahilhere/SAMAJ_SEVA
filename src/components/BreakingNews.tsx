@@ -34,7 +34,7 @@ const BreakingNews: React.FC<BreakingNewsProps> = ({
   if (breakingNews.length === 0) return null;
 
   return (
-    <div className="bg-red-600 text-white py-2 overflow-hidden">
+    <div className="bg-red-600 text-white py-1 overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="flex items-center">
           <div className="flex items-center bg-red-700 px-3 py-1 rounded mr-4">

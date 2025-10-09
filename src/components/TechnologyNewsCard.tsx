@@ -13,7 +13,7 @@ interface NewsCardProps {
   showImage?: boolean;
 }
 
-const NewsCard: React.FC<NewsCardProps> = ({
+const TechnologyNewsCard: React.FC<NewsCardProps> = ({
   article,
   size = "medium",
   showImage = true,
@@ -57,11 +57,11 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
   const cardClasses = {
     small:
-      "bg-white overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-red-200 group",
+      "bg-white  overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-red-200 group",
     medium:
       "bg-white overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 hover:border-red-200 group",
     large:
-      "bg-white overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 hover:border-red-200 group",
+      "bg-white  overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 hover:border-red-200 group",
   };
 
   const imageClasses = {
@@ -111,7 +111,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </div>
       )}
 
-      <div className={`p-${size === "large" ? "6" : "4"}`}>
+      <div className={`p-${size === "large" ? "4" : "2"}`}>
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs text-blue-600 font-medium bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-1 rounded-full border border-blue-200">
             📍 {article.region}
@@ -183,4 +183,4 @@ const NewsCard: React.FC<NewsCardProps> = ({
   );
 };
 
-export default NewsCard;
+export default TechnologyNewsCard;

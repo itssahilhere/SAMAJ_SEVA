@@ -1,21 +1,23 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header";
 import BreakingNews from "./components/BreakingNews";
 import NewsGrid from "./components/NewsGrid";
 import Sidebar from "./components/Sidebar";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import TopNews from "./pages/TopNews";
-import Politics from "./pages/Politics";
-import Sports from "./pages/Sports";
-import Entertainment from "./pages/Entertainment";
-import Business from "./pages/Business";
-import Technology from "./pages/Technology";
+// import Home from "./pages/Home";
+// import TopNews from "./pages/TopNews";
+// import Politics from "./pages/Politics";
+// import Sports from "./pages/Sports";
+// import Entertainment from "./pages/Entertainment";
+// import Business from "./pages/Business";
+// import Technology from "./pages/Technology";
 import ArticleDetail from "./pages/ArticleDetail";
+import RegionNews from "./pages/RegionNews";
 import { newsAPI } from "./services/api";
 import type { NewsArticle, Region } from "./types";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   // State management for the original functionality
@@ -31,11 +33,17 @@ function App() {
 
   const regions: Region[] = [
     { id: "1", name: "All Regions", code: "all" },
-    { id: "2", name: "India", code: "india" },
-    { id: "3", name: "Punjab", code: "punjab" },
-    { id: "4", name: "Delhi", code: "delhi" },
-    { id: "5", name: "Mumbai", code: "mumbai" },
-    { id: "6", name: "Kerala", code: "kerala" },
+    { id: "2", name: "India", code: "in" },
+    { id: "3", name: "Delhi", code: "delhi" },
+    { id: "4", name: "Punjab", code: "punjab" },
+    { id: "5", name: "Chandigarh", code: "chandigarh" },
+    { id: "6", name: "Uttar Pradesh", code: "uttar-pradesh" },
+    { id: "7", name: "Himachal", code: "himachal" },
+    { id: "8", name: "Haryana", code: "haryana" },
+    { id: "9", name: "Madhya Pradesh", code: "madhya-pradesh" },
+    { id: "10", name: "Jammu and Kashmir", code: "jammu-and-kashmir" },
+    { id: "11", name: "Bihar", code: "bihar" },
+    { id: "12", name: "Jharkand", code: "jharkand" },
   ];
 
   // Load initial data
@@ -53,7 +61,6 @@ function App() {
 
         setBreakingNews(breakingResponse.data || []);
         setFeaturedNews(featuredResponse.data || []);
-
         // Load initial news for all regions
         const newsResponse = await newsAPI.getNewsByRegion("all", 1, 10);
         setNews(newsResponse.data || []);
@@ -188,13 +195,21 @@ function App() {
     }
   };
 
+  console.log(breakingNews);
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 px-0 lg:px-30">
+        {/* <Header
+          regions={regions}
+          selectedRegion={selectedRegion}
+          onRegionChange={handleRegionChange}
+          onSearch={handleSearch}
+        /> */}
         <Routes>
           {/* Route with Layout wrapper for page components */}
           <Route
-            path="/home"
+            path="/region/:regionCode"
             element={
               <Layout
                 selectedRegion={selectedRegion}
@@ -202,85 +217,8 @@ function App() {
                 onSearch={handleSearch}
                 regions={regions}
               >
-                <Home regions={regions} selectedRegion={selectedRegion} />
-              </Layout>
-            }
-          />
-          <Route
-            path="/top-news"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <TopNews />
-              </Layout>
-            }
-          />
-          <Route
-            path="/politics"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <Politics />
-              </Layout>
-            }
-          />
-          <Route
-            path="/sports"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <Sports />
-              </Layout>
-            }
-          />
-          <Route
-            path="/entertainment"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <Entertainment />
-              </Layout>
-            }
-          />
-          <Route
-            path="/business"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <Business />
-              </Layout>
-            }
-          />
-          <Route
-            path="/technology"
-            element={
-              <Layout
-                selectedRegion={selectedRegion}
-                onRegionChange={handleRegionChange}
-                onSearch={handleSearch}
-                regions={regions}
-              >
-                <Technology />
+                <BreakingNews breakingNews={breakingNews} loading={loading} />
+                <RegionNews />
               </Layout>
             }
           />
@@ -305,8 +243,12 @@ function App() {
             path="/"
             element={
               <>
-                <Header />
-
+                <Header
+                  regions={regions}
+                  selectedRegion={selectedRegion}
+                  onRegionChange={handleRegionChange}
+                  onSearch={handleSearch}
+                />
                 <BreakingNews breakingNews={breakingNews} loading={loading} />
 
                 <main className="container mx-auto px-4 py-8">
@@ -352,75 +294,78 @@ function App() {
                 </main>
 
                 {/* Footer */}
-                <footer className="bg-gray-800 text-white py-8 mt-16">
-                  <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                      <div>
-                        <h3 className="text-lg font-bold mb-4">SAMAJ SEWAK</h3>
-                        <p className="text-gray-300 text-sm">
-                          Your trusted regional news source. We provide accurate
-                          and unbiased news coverage across India.
-                        </p>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-4">Categories</h4>
-                        <ul className="space-y-2 text-sm text-gray-300">
-                          <li>
-                            <Link to="/politics" className="hover:text-white">
-                              Politics
-                            </Link>
-                          </li>
-                          <li>
-                            <Link to="/sports" className="hover:text-white">
-                              Sports
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              to="/entertainment"
-                              className="hover:text-white"
-                            >
-                              Entertainment
-                            </Link>
-                          </li>
-                          <li>
-                            <Link to="/business" className="hover:text-white">
-                              Business
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-4">Regions</h4>
-                        <ul className="space-y-2 text-sm text-gray-300">
-                          {regions.slice(0, 4).map((region) => (
-                            <li key={region.id}>
-                              <a href="#" className="hover:text-white">
-                                {region.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold mb-4">Contact</h4>
-                        <ul className="space-y-2 text-sm text-gray-300">
-                          <li>Email: contact@newshubindia.com</li>
-                          <li>Phone: +91 98765 43210</li>
-                          <li>Address: New Delhi, India</li>
-                        </ul>
-                      </div>
-                    </div>
-                    <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-300">
-                      <p>&copy; 2025 SAMAJ SEWAK. All rights reserved.</p>
-                    </div>
-                  </div>
-                </footer>
               </>
             }
           />
         </Routes>
       </div>
+
+      {/* <footer className="bg-gray-800 text-white py-8 mt-16">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-bold mb-4">SAMAJ SEWAK</h3>
+              <p className="text-gray-300 text-sm">
+                Your trusted regional news source. We provide accurate and
+                unbiased news coverage across India.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Categories</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>
+                  <Link to="/politics" className="hover:text-white">
+                    Politics
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/sports" className="hover:text-white">
+                    Sports
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/entertainment" className="hover:text-white">
+                    Entertainment
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/business" className="hover:text-white">
+                    Business
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Regions</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                {regions.slice(0, 4).map((region) => (
+                  <li key={region.id}>
+                    <a href="#" className="hover:text-white">
+                      {region.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li>Email: contact@newshubindia.com</li>
+                <li>Phone: +91 98765 43210</li>
+                <li>Address: New Delhi, India</li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-300">
+            <p>&copy; 2025 SAMAJ SEWAK. All rights reserved.</p>
+          </div>
+        </div>
+      </footer> */}
+      <Footer
+        selectedRegion={selectedRegion}
+        onRegionChange={handleRegionChange}
+        regions={regions}
+      />
     </Router>
   );
 }
