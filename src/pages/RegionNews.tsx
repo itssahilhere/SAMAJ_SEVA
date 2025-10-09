@@ -40,7 +40,7 @@ function RegionNews() {
     const getAdminNews = async () => {
       try {
         const response = await fetch(
-          `http://localhost:4000/api/news?region=${regionCode}`,
+          `https://samaj-seva-admin-panel-backend.onrender.com/api/news?region=${regionCode}`,
           { method: "GET" }
         );
         const adminNews = await response.json();
