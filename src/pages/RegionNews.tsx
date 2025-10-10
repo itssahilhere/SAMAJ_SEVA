@@ -40,7 +40,7 @@ function RegionNews() {
     const getAdminNews = async () => {
       try {
         const response = await fetch(
-          `https://samaj-seva-admin-panel-backend.onrender.com/api/news?region=${regionCode}`,
+          `https://samaj-seva-admin-panel-backend-2.onrender.com/api/news?region=${regionCode}`,
           { method: "GET" }
         );
         const adminNews = await response.json();
@@ -48,16 +48,32 @@ function RegionNews() {
         console.log(`Admin News for region ${regionCode}:`, adminNews);
 
         // Filter admin news matching the region
-        const filteredAdminNews = adminNews.filter(
-          (item: NewsArticle) => item.region?.includes(regionCode) // region can be an array
-        );
+        const filteredAdminNews = adminNews
+          .filter((item: NewsArticle) => item.region?.includes(regionCode))
+          .map((item: NewsArticle) => ({
+            author: item.author,
+            title: item.title,
+            summary: item.summary,
+            content: item.content,
+            url: item.url,
+            tags: item.tags,
+            id: item.id,
+            imageUrl: item.imageUrl,
+            publishedAt: item.publishedAt,
+            isBreaking: item.isBreaking,
+            views: item.views,
+            readTime: item.readTime,
+            category: Array.isArray(item.category)
+              ? item.category[0]
+              : item.category,
+            region: Array.isArray(item.region) ? item.region[0] : item.region,
+          }));
 
         // Prepare structure like sectionData (category-based)
         const adminSectionData: SectionData = {};
         CATEGORY_MAP.forEach((cat) => {
           adminSectionData[cat.key] = filteredAdminNews.filter(
-            (item: NewsArticle) =>
-              Array.isArray(item.category) && item.category.includes(cat.key)
+            (item: NewsArticle) => item.category === cat.key
           );
         });
 
@@ -89,6 +105,7 @@ function RegionNews() {
         });
 
         setSectionData(data);
+        console.log("Section data:", data);
         setLoading(false);
         console.log("Merged section data:", data);
       } catch (err) {

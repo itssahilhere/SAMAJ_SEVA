@@ -80,7 +80,7 @@ const TopNews: React.FC<NewsGridProps> = ({
       <h1 className="font-bold text-xl">Top News</h1>
       {/* Grid Layout for remaining articles */}
       <ul className="list-disc flex flex-col gap-4 pl-5">
-        {news.slice(1).map((article) => (
+        {news.map((article) => (
           <div key={article.id}>
             <TopNewsCard article={article} size="medium" />
           </div>
